@@ -369,8 +369,8 @@ function jsQR(data, width, height, providedOptions) {
     var options = Object.create(null);
     mergeObject(options, defaultOptions);
     mergeObject(options, providedOptions);
-    var shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst";
     var tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
+    var shouldInvert = options.inversionAttempts === "attemptBoth" || tryInvertedFirst;
     var _a = binarizer_1.binarize(data, width, height, shouldInvert, options.canOverwriteImage), binarized = _a.binarized, inverted = _a.inverted;
     var result = scan(tryInvertedFirst ? inverted : binarized);
     if (!result && (options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst")) {

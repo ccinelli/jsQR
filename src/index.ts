@@ -77,8 +77,8 @@ function jsQR(data: Uint8ClampedArray, width: number, height: number, providedOp
   mergeObject(options, defaultOptions);
   mergeObject(options, providedOptions);
 
-  const shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst";
   const tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
+  const shouldInvert = options.inversionAttempts === "attemptBoth" || tryInvertedFirst;
   const {binarized, inverted} = binarize(data, width, height, shouldInvert, options.canOverwriteImage);
   let result = scan(tryInvertedFirst ? inverted : binarized);
   if (!result && (options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst")) {
