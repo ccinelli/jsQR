@@ -18,6 +18,7 @@ export interface QRCode {
 }
 export interface Options {
     inversionAttempts?: "dontInvert" | "onlyInvert" | "attemptBoth" | "invertFirst";
+    canOverwriteImage?: boolean;
 }
 declare function jsQR(data: Uint8ClampedArray, width: number, height: number, providedOptions?: Options): QRCode | null;
 export default jsQR;
