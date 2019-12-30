@@ -54,7 +54,7 @@
 </head>
 <body>
   <h1>jsQR Demo</h1>
-  <a id="githubLink" href="https://github.com/cozmo/jsQR">View documentation on Github</a>
+  <a id="githubLink" href="https://github.com/ccinelli/jsQR">Github</a>
   <p>Pure JavaScript QR code decoding library.</p>
   <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
   <canvas id="canvas" hidden></canvas>
@@ -70,6 +70,54 @@
     var outputContainer = document.getElementById("output");
     var outputMessage = document.getElementById("outputMessage");
     var outputData = document.getElementById("outputData");
+    var lastResult;
+
+    var inversionAttempts = "dontInvert";
+    var canOverwriteImage = true;
+
+    function escapeHTML(s) {
+      var n = s;
+      n = n.replace(/&/g, '&amp;');
+      n = n.replace(/</g, '&lt;');
+      n = n.replace(/>/g, '&gt;');
+      n = n.replace(/"/g, '&quot;');
+
+      return n;
+    }
+
+    var protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
+    var localhostDomainRE = /^localhost[\:?\d]*(?:[^\:?\d]\S*)?$/
+    var nonLocalhostDomainRE = /^[^\s\.]+\.\S{2,}$/;
+
+    /**
+     * Loosely validate a URL `string`.
+     *
+     * @param {String} string
+     * @return {Boolean}
+     */
+
+    function isUrl(string){
+      if (typeof string !== 'string') {
+        return false;
+      }
+
+      var match = string.match(protocolAndDomainRE);
+      if (!match) {
+        return false;
+      }
+
+      var everythingAfterProtocol = match[1];
+      if (!everythingAfterProtocol) {
+        return false;
+      }
+
+      if (localhostDomainRE.test(everythingAfterProtocol) ||
+          nonLocalhostDomainRE.test(everythingAfterProtocol)) {
+        return true;
+      }
+
+      return false;
+    }
 
     function drawLine(begin, end, color) {
       canvas.beginPath();
@@ -100,7 +148,8 @@
         canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
         var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
         var code = jsQR(imageData.data, imageData.width, imageData.height, {
-          inversionAttempts: "dontInvert",
+          inversionAttempts: inversionAttempts,
+          canOverwriteImage: canOverwriteImage
         });
         if (code) {
           drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
@@ -109,10 +158,14 @@
           drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
           outputMessage.hidden = true;
           outputData.parentElement.hidden = false;
-          outputData.innerText = code.data;
+          if (lastResult != code.data) {
+            let str = isUrl(code.data) ? '<a href="' +  code.data + '">' + code.data + '</a>' : escapeHTML(code.data);
+            outputData.innerText = outputData.innerText + str + '<br/>';
+            lastResult = code.data;
+          }
         } else {
-          outputMessage.hidden = false;
-          outputData.parentElement.hidden = true;
+          //outputMessage.hidden = false;
+          //outputData.parentElement.hidden = true;
         }
       }
       requestAnimationFrame(tick);
