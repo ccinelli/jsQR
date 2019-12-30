@@ -1,9 +1,10 @@
-import { Chunks } from "./decoder/decodeData";
+import { Chunks, StructuredAppendTag } from "./decoder/decodeData";
 import { Point } from "./locator";
 export interface QRCode {
     binaryData: number[];
     data: string;
     chunks: Chunks;
+    structuredAppend?: StructuredAppendTag;
     location: {
         topRightCorner: Point;
         topLeftCorner: Point;
