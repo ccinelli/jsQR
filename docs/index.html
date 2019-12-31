@@ -132,10 +132,10 @@
   <div id="output" hidden>
     <div id="outputMessage">No QR code detected.</div>
     <div hidden>
-      <div id="outputData"></div>
-      <button class="copy-btn" data-clipboard-target="#outputData div:last-child">
+      <button class="copy-btn" data-clipboard-target="#outputData div:first-child">
         COPY
       </button>
+      <div id="outputData"></div>
     </div>
   </div>
 
@@ -244,9 +244,9 @@
             } else {
               node.innerText = code.data;
             }
-            outputData.append(node);
+            outputData.prepend(node);
             lastResult = code.data;
-            if (node.scrollIntoView) node.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+            if (node.scrollIntoView) node.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
           }
         } else {
           //outputMessage.hidden = false;
